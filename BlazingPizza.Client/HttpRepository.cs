@@ -30,8 +30,11 @@ public class HttpRepository : IRepository
 		return await _httpClient.GetFromJsonAsync<List<Topping>>("toppings") ?? new();
 	}
 
-	public async Task PlaceOrder(Order order)
+	public async Task<int> PlaceOrder(Order order)
 	{
-		await _httpClient.PostAsJsonAsync("orders", order);
+		var response = await _httpClient.PostAsJsonAsync("orders", order);
+		var newOrderId = await response.Content.ReadFromJsonAsync<int>();
+		return newOrderId;
+
 	}
 }

@@ -27,6 +27,8 @@ public class EfRepository : IRepository
 	public async Task<OrderWithStatus> GetOrderWithStatus(int orderId)
 	{
 
+		//await Task.Delay(5000);
+
 		var order = await _Context.Orders
 						.Where(o => o.OrderId == orderId)
 						.Include(o => o.DeliveryLocation)
@@ -50,7 +52,7 @@ public class EfRepository : IRepository
 		return await _Context.Toppings.OrderBy(t => t.Name).ToListAsync();
 	}
 
-	public Task PlaceOrder(Order order)
+	public Task<int> PlaceOrder(Order order)
 	{
 		throw new NotImplementedException();
 	}

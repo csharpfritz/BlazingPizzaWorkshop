@@ -11,7 +11,7 @@ public interface IRepository
 
 	Task<OrderWithStatus> GetOrderWithStatus(int orderId);
 
-	Task PlaceOrder(Order order);
+	Task<int> PlaceOrder(Order order);
 
 
 }

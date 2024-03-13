@@ -1,5 +1,6 @@
 global using BlazingPizza.Shared;
 using BlazingPizza;
+using BlazingPizza.Client;
 using BlazingPizza.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,12 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
+		.AddInteractiveServerComponents()
 		.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddDbContext<PizzaStoreContext>(options =>
 				options.UseSqlite("Data Source=pizza.db"));
 
 builder.Services.AddScoped<IRepository, EfRepository>();
+builder.Services.AddScoped<OrderState>();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -47,7 +52,10 @@ app.UseAntiforgery();
 
 app.MapPizzaApi();
 
+app.MapControllers();
+
 app.MapRazorComponents<App>()
+		.AddInteractiveServerRenderMode()
 		.AddInteractiveWebAssemblyRenderMode()
 		.AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
 
