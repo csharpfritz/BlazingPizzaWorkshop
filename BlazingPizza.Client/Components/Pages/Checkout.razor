@@ -4,11 +4,12 @@
 @inject IRepository Repository
 @inject NavigationManager NavigationManager
 
+
 <PageTitle>Blazing Pizza - Checkout</PageTitle>
 
 <div class="main">
 
-	<EditForm Model="OrderState.Order.DeliveryAddress" OnValidSubmit="PlaceOrder">
+	<EditForm EditContext="EditContext" OnValidSubmit="PlaceOrder">
 
 		<div class="checkout-cols">
 			<div class="checkout-order-details">
@@ -35,6 +36,16 @@
 </div>
 
 @code {
+
+	public EditContext EditContext { get; set; }
+
+	override protected async Task OnInitializedAsync()
+	{
+
+		EditContext = new EditContext(OrderState.Order.DeliveryAddress);
+		EditContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
+
+	}
 
 	async Task PlaceOrder()
 	{
