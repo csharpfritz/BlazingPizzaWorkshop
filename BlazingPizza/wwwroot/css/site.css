@@ -756,3 +756,22 @@ input[type=range] {
         transform: translateX(500px);
     }
 }
+
+
+.pizza-small {
+	font-size: small;
+	font-weight: normal;
+	font-style: normal;
+}
+
+.pizza-medium {
+	font-size: medium;
+	font-weight: normal;
+	font-style: italic;
+}
+
+.pizza-large {
+	font-size: large;
+	font-weight: bold;
+	font-style: italic;
+}

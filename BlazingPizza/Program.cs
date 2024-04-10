@@ -84,7 +84,10 @@ app.MapControllers();
 app.MapRazorComponents<App>()
 		.AddInteractiveServerRenderMode()
 		.AddInteractiveWebAssemblyRenderMode()
-		.AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
+		.AddAdditionalAssemblies(
+			typeof(BlazingPizza.Client._Imports).Assembly,
+			typeof(BlazingPizza.ComponentsLibrary._Imports).Assembly
+		);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

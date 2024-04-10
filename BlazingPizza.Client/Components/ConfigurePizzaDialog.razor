@@ -1,14 +1,12 @@
 ﻿@inject IRepository _pizzaStore
 
-<div class="dialog-container">
-	<div class="dialog">
 		<div class="dialog-title">
 			<h2>@Pizza.Special?.Name</h2>
 			@Pizza.Special?.Description
 		</div>
 		<form class="dialog-body">
 			<div>
-				<label>Size:</label>
+				<label class="@SizeLabelClass" title="@SizeTitle">Size:</label>
 				<input type="range" min="@Pizza.MinimumSize" max="@Pizza.MaximumSize" step="1" @bind="Pizza.Size" @bind:event="oninput" />
 				<span class="size-label">
 					@(Pizza.Size)" (£@(Pizza.GetFormattedTotalPrice()))
@@ -59,8 +57,6 @@
 			</span>
 			<button class="btn btn-success ml-auto" @onclick="OnConfirm">Order ></button>
 		</div>
-	</div>
-</div>
 
 
 @code {
@@ -70,6 +66,23 @@
 	[Parameter, EditorRequired] public EventCallback OnConfirm { get; set; }
 
 	List<Topping> toppings = null!;
+
+	private const int SmallPizzaSize = 9;
+	private const int LargePizzaSize = 14;
+
+	string SizeLabelClass => Pizza.Size switch
+	{
+		<= SmallPizzaSize => "pizza-small",
+		>= LargePizzaSize => "pizza-large",
+		_ => "pizza-medium"
+	};
+
+	string SizeTitle => Pizza.Size switch
+	{
+		<= SmallPizzaSize => "That's a small pizza, you've got a family to feed.... why not order more?",
+		>= LargePizzaSize => "Now that's what I'm talking about!  Why not try an American Sized JUMBO pizza?",
+		_ => "That's a medium pizza, there's more to be ordered if you'd like it"
+	};
 
 	protected async override Task OnInitializedAsync()
 	{

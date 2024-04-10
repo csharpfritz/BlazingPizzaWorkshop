@@ -4,8 +4,11 @@
     <Found Context="routeData">
 			<AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
 				<NotAuthorized>
-					<text>Not Authorized</text>
+					<RedirectToLogin />
 				</NotAuthorized>
+				<Authorizing>
+					<text>Authorizing...  Please wait</text>
+				</Authorizing>
 			</AuthorizeRouteView>
 			<FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>

@@ -34,7 +34,7 @@
 
 			@foreach (var configuredPizza in OrderState.Order.Pizzas)
 			{
-				<ConfiguredPizzaItem Pizza="configuredPizza" OnRemoved="@(() => OrderState.RemoveConfiguredPizza(configuredPizza))" />
+				<ConfiguredPizzaItem Pizza="configuredPizza" OnRemoved="@(() => RemovePizza(configuredPizza))" />
 			}
 		</div>
 	}
@@ -52,12 +52,11 @@
 	</div>
 </div>
 
-@if (OrderState.ShowingConfigureDialog)
-{
+<BlazingPizza.ComponentsLibrary.TemplatedDialog Show="OrderState.ShowingConfigureDialog">
 	<ConfigurePizzaDialog Pizza="OrderState.ConfiguringPizza"
 												OnCancel="OrderState.CancelConfigurePizzaDialog"
 												OnConfirm="OrderState.ConfirmConfigurePizzaDialog" />
-}
+</BlazingPizza.ComponentsLibrary.TemplatedDialog>
 
 @code {
 	List<PizzaSpecial>? specials;
@@ -66,6 +65,14 @@
 	{
 		specials = await PizzaStore.GetSpecials();
 		OrderState.JSRuntime = JSRuntime;
+	}
+
+	async Task RemovePizza(Pizza configuredPizza)
+	{
+		if (await JSRuntime.Confirm($"Remove {configuredPizza.Special?.Name} pizza from the order?"))
+		{
+			OrderState.RemoveConfiguredPizza(configuredPizza);
+		}
 	}
 
 }

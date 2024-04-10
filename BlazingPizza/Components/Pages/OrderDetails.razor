@@ -33,6 +33,11 @@
 				<div class="track-order-details">
 					<OrderReview Order="orderWithStatus.Order" />
 				</div>
+
+				<div class="track-order-map">
+					 <Map Zoom="13" Markers="orderWithStatus?.MapMarkers" />
+				</div>
+
 			</div>
 		</div>
 	}
@@ -55,10 +60,12 @@
 		// If we were already polling for a different order, stop doing so
 		pollingCancellationToken?.Cancel();
 
-		orderWithStatus = await Repository.GetOrderWithStatus(OrderId, HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+		orderWithStatus = await Repository.GetOrderWithStatus(OrderId);
 
 		// Start a new poll loop
 		pollingTask = PollForUpdates();
+
+		await base.OnParametersSetAsync();
 
 	}
 

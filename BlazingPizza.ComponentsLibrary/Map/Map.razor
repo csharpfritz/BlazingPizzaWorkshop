@@ -1,19 +1,26 @@
-﻿@using Microsoft.JSInterop
+@using Microsoft.JSInterop
 @inject IJSRuntime JSRuntime
 
+The map
 <div id="@elementId" style="height: 100%; width: 100%;"></div>
 
+
 @code {
-    string elementId = $"map-{Guid.NewGuid().ToString("D")}";
 
-    [Parameter] public double Zoom { get; set; }
-    [Parameter, EditorRequired] public List<Marker> Markers { get; set; } = new();
+	string elementId = $"map-{Guid.NewGuid().ToString("D")}";
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        await JSRuntime.InvokeVoidAsync(
-            "deliveryMap.showOrUpdate",
-            elementId,
-            Markers);
-    }
+	[Parameter] public double Zoom { get; set; }
+	[Parameter, EditorRequired] public List<Marker> Markers { get; set; } = new();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		Console.WriteLine("OnAfterRender");
+		await JSRuntime.InvokeVoidAsync(
+				"deliveryMap.showOrUpdate",
+				elementId,
+				Markers);
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+
 }
