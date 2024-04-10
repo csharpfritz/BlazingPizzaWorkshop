@@ -1,5 +1,8 @@
 ﻿@page "/myorders"
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 @inject IRepository Repository
+@attribute [Authorize]
 
 <PageTitle>Blazing Pizza - My Orders</PageTitle>
 
@@ -43,8 +46,11 @@
 @code {
 	IEnumerable<OrderWithStatus>? ordersWithStatus;
 
+	[CascadingParameter]
+	public HttpContext HttpContext { get; set; } = default!;
+
 	protected override async Task OnParametersSetAsync()
 	{
-		ordersWithStatus = await Repository.GetOrdersAsync();
+		ordersWithStatus = await Repository.GetOrdersAsync(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 	}
 }

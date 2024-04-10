@@ -1,6 +1,9 @@
 ﻿@page "/checkout"
+@using Microsoft.AspNetCore.Authorization
 @rendermode InteractiveWebAssembly
+@attribute [Authorize]
 @inject OrderState OrderState
+@inject IJSRuntime JSRuntime
 @inject IRepository Repository
 @inject NavigationManager NavigationManager
 
@@ -37,13 +40,20 @@
 
 @code {
 
-	public EditContext EditContext { get; set; }
+	public EditContext EditContext { get; set; } = new EditContext(new Order());
 
-	override protected async Task OnInitializedAsync()
+	override protected async Task OnAfterRenderAsync(bool first)
 	{
 
-		EditContext = new EditContext(OrderState.Order.DeliveryAddress);
-		EditContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
+		if (first)
+		{
+			await OrderState.GetStateFromLocalStorage(JSRuntime);
+
+			EditContext = new EditContext(OrderState.Order.DeliveryAddress);
+			EditContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
+
+			StateHasChanged();
+		}
 
 	}
 

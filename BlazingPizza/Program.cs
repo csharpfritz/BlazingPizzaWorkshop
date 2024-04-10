@@ -1,7 +1,10 @@
 global using BlazingPizza.Shared;
-using BlazingPizza;
+global using BlazingPizza;
 using BlazingPizza.Client;
 using BlazingPizza.Components;
+using BlazingPizza.Components.Account;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +14,32 @@ builder.Services.AddRazorComponents()
 		.AddInteractiveServerComponents()
 		.AddInteractiveWebAssemblyComponents();
 
+
+// Add Security
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
+
+
 builder.Services.AddDbContext<PizzaStoreContext>(options =>
 				options.UseSqlite("Data Source=pizza.db"));
+
+// Add Identity
+builder.Services.AddIdentityCore<PizzaStoreUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<PizzaStoreContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IEmailSender<PizzaStoreUser>, IdentityNoOpEmailSender>();
+
 
 builder.Services.AddScoped<IRepository, EfRepository>();
 builder.Services.AddScoped<OrderState>();
@@ -58,5 +85,9 @@ app.MapRazorComponents<App>()
 		.AddInteractiveServerRenderMode()
 		.AddInteractiveWebAssemblyRenderMode()
 		.AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
+
+// Add additional endpoints required by the Identity /Account Razor components.
+app.MapAdditionalIdentityEndpoints();
+
 
 app.Run();

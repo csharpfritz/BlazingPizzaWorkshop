@@ -24,6 +24,21 @@ public class EfRepository : IRepository
 		return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
 	}
 
+	public async Task<List<OrderWithStatus>> GetOrdersAsync(string userId)
+	{
+		
+		var orders = await _Context.Orders
+						.Where(o => o.UserId == userId)
+						.Include(o => o.DeliveryLocation)
+						.Include(o => o.Pizzas).ThenInclude(p => p.Special)
+						.Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
+						.OrderByDescending(o => o.CreatedTime)
+						.ToListAsync();
+
+		return orders.Select(o => OrderWithStatus.FromOrder(o)).ToList();
+
+	}
+
 	public async Task<OrderWithStatus> GetOrderWithStatus(int orderId)
 	{
 
@@ -40,6 +55,20 @@ public class EfRepository : IRepository
 
 		return OrderWithStatus.FromOrder(order);
 
+	}
+
+	public async Task<OrderWithStatus> GetOrderWithStatus(int orderId, string userId)
+	{
+		var order = await _Context.Orders
+						.Where(o => o.OrderId == orderId && o.UserId == userId)
+						.Include(o => o.DeliveryLocation)
+						.Include(o => o.Pizzas).ThenInclude(p => p.Special)
+						.Include(o => o.Pizzas).ThenInclude(p => p.Toppings).ThenInclude(t => t.Topping)
+						.SingleOrDefaultAsync();
+
+		if (order is null) throw new ArgumentNullException(nameof(order));
+
+		return OrderWithStatus.FromOrder(order);
 	}
 
 	public async Task<List<PizzaSpecial>> GetSpecials()

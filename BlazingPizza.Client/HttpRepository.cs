@@ -15,7 +15,17 @@ public class HttpRepository : IRepository
 		throw new NotImplementedException();
 	}
 
-	public Task<OrderWithStatus> GetOrderWithStatus(int orderId)
+	public Task<List<OrderWithStatus>> GetOrdersAsync(string userId)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<OrderWithStatus> GetOrderWithStatus(int orderId)	
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<OrderWithStatus> GetOrderWithStatus(int orderId, string userId)
 	{
 		throw new NotImplementedException();
 	}

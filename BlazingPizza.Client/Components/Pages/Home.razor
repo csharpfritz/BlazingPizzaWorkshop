@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveWebAssembly
 @inject IRepository PizzaStore
+@inject IJSRuntime JSRuntime
 @inject OrderState OrderState
 @inject NavigationManager NavigationManager
 
@@ -64,6 +65,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		specials = await PizzaStore.GetSpecials();
+		OrderState.JSRuntime = JSRuntime;
 	}
 
 }

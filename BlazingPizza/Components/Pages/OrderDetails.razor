@@ -1,6 +1,9 @@
 ﻿@page "/myorders/{orderId:int}"
 
 @using System.Threading
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+@attribute [Authorize]
 @implements IDisposable
 @rendermode InteractiveServer
 @inject IRepository Repository
@@ -38,6 +41,9 @@
 @code {
 	[Parameter] public int OrderId { get; set; }
 
+	[CascadingParameter]
+	public HttpContext HttpContext { get; set;} = default!; 
+
 	OrderWithStatus? orderWithStatus;
 	bool invalidOrder;
 	CancellationTokenSource? pollingCancellationToken;
@@ -49,7 +55,7 @@
 		// If we were already polling for a different order, stop doing so
 		pollingCancellationToken?.Cancel();
 
-		orderWithStatus = await Repository.GetOrderWithStatus(OrderId);
+		orderWithStatus = await Repository.GetOrderWithStatus(OrderId, HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
 		// Start a new poll loop
 		pollingTask = PollForUpdates();

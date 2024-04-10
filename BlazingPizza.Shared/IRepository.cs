@@ -9,7 +9,11 @@ public interface IRepository
 
 	Task<List<OrderWithStatus>> GetOrdersAsync();
 
+	Task<List<OrderWithStatus>> GetOrdersAsync(string userId);
+
 	Task<OrderWithStatus> GetOrderWithStatus(int orderId);
+
+	Task<OrderWithStatus> GetOrderWithStatus(int orderId, string userId);
 
 	Task<int> PlaceOrder(Order order);
 
