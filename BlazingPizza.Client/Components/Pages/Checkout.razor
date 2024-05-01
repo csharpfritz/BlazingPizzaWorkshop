@@ -1,5 +1,6 @@
 ﻿@page "/checkout"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
 @inject OrderState OrderState
@@ -42,6 +43,12 @@
 
 	public EditContext EditContext { get; set; } = new EditContext(new Order());
 
+	protected override void OnInitialized()
+	{
+		// In the background, ask if they want to be notified about order updates
+		_ = RequestNotificationSubscriptionAsync();
+	}
+
 	override protected async Task OnAfterRenderAsync(bool first)
 	{
 
@@ -62,5 +69,21 @@
 		var newOrderId = await Repository.PlaceOrder(OrderState.Order);
 		OrderState.ResetOrder();
 		NavigationManager.NavigateTo($"myorders/{newOrderId}");
+	}
+
+	async Task RequestNotificationSubscriptionAsync()
+	{
+		var subscription = await JSRuntime.InvokeAsync<NotificationSubscription>("blazorPushNotifications.requestSubscription");
+		if (subscription is not null)
+		{
+			try
+			{
+				await Repository.SubscribeToNotifications(subscription);
+			}
+			catch (AccessTokenNotAvailableException ex)
+			{
+				ex.Redirect();
+			}
+		}
 	}
 }

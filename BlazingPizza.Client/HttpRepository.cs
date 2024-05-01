@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
 
 public class HttpRepository : IRepository
 {
@@ -46,5 +47,11 @@ public class HttpRepository : IRepository
 		var newOrderId = await response.Content.ReadFromJsonAsync<int>();
 		return newOrderId;
 
+	}
+
+	public async Task SubscribeToNotifications(NotificationSubscription subscription)
+	{
+		var response = await _httpClient.PutAsJsonAsync("notifications/subscribe", subscription);
+		response.EnsureSuccessStatusCode();
 	}
 }

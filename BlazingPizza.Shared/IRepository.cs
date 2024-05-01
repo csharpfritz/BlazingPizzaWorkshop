@@ -17,5 +17,6 @@ public interface IRepository
 
 	Task<int> PlaceOrder(Order order);
 
+	Task SubscribeToNotifications(NotificationSubscription subscription);
 
 }

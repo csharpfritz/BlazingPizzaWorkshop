@@ -85,4 +85,9 @@ public class EfRepository : IRepository
 	{
 		throw new NotImplementedException();
 	}
+
+	public Task SubscribeToNotifications(NotificationSubscription subscription)
+	{
+		throw new NotImplementedException();
+	}
 }
