@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using OpenIddict.EntityFrameworkCore.Models;
+using OpenIddict.Abstractions; 
 
 namespace BlazingPizza;
 
@@ -31,5 +33,8 @@ public class PizzaStoreContext : IdentityDbContext<PizzaStoreUser>
 
         // Inline the Lat-Long pairs in Order rather than having a FK to another table
         modelBuilder.Entity<Order>().OwnsOne(o => o.DeliveryLocation);
+
+        // Register the entity sets needed by OpenIddict
+        modelBuilder.UseOpenIddict();
     }
 }

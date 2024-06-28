@@ -1,89 +1,72 @@
 ﻿@page "/checkout"
+@using BlazingPizza.Shared
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 @attribute [Authorize]
 @inject OrderState OrderState
-@inject IJSRuntime JSRuntime
+@inject IOrderService OrderService
 @inject IRepository Repository
 @inject NavigationManager NavigationManager
-
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Blazing Pizza - Checkout</PageTitle>
 
 <div class="main">
-
-	<EditForm EditContext="EditContext" OnValidSubmit="PlaceOrder">
-
-		<div class="checkout-cols">
-			<div class="checkout-order-details">
-				<h4>Review order</h4>
-				<OrderReview Order="OrderState.Order" />
-			</div>
-
-			<div class="checkout-delivery-address">
-				<h4>Deliver to...</h4>
-				<AddressEditor Address="OrderState.Order.DeliveryAddress" />
-			</div>
-
-		</div>
-
-		<button class="checkout-button btn btn-warning" type="submit">
-			Place order
-		</button>
-
-		<DataAnnotationsValidator />
-		<ValidationSummary />
-
-	</EditForm>
-
+    <EditForm EditContext="EditContext" OnValidSubmit="PlaceOrder" FormName="checkoutForm">
+        <div class="checkout-cols">
+            <div class="checkout-order-details">
+                <h4>Review order</h4>
+                <OrderReview Order="OrderState.Order" />
+            </div>
+            <div class="checkout-delivery-address">
+                <h4>Deliver to...</h4>
+                <AddressEditor Address="OrderState.Order.DeliveryAddress" />
+            </div>
+        </div>
+        <button class="checkout-button btn btn-warning" type="submit">
+            Place order
+        </button>
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+    </EditForm>
 </div>
 
 @code {
+    public EditContext EditContext { get; set; } = new EditContext(new Order());
 
-	public EditContext EditContext { get; set; } = new EditContext(new Order());
+    protected override void OnInitialized()
+    {
+        // In the background, ask if they want to be notified about order updates
+        _ = RequestNotificationSubscriptionAsync();
+    }
 
-	protected override void OnInitialized()
-	{
-		// In the background, ask if they want to be notified about order updates
-		_ = RequestNotificationSubscriptionAsync();
-	}
+    override protected async Task OnAfterRenderAsync(bool first)
+    {
+        if (first)
+        {
+            await OrderState.GetStateFromLocalStorage(JSRuntime);
+            EditContext = new EditContext(OrderState.Order.DeliveryAddress);
+            EditContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
+            StateHasChanged();
+        }
+    }
 
-	override protected async Task OnAfterRenderAsync(bool first)
-	{
+    async Task PlaceOrder()
+    {
+        Console.WriteLine("PlaceOrder method called in Checkout.razor");
+        var newOrderId = await Repository.PlaceOrder(OrderState.Order);
+		// var newOrderId = await OrderService.PlaceOrder(OrderState.Order);
+        OrderState.ResetOrder();
+        NavigationManager.NavigateTo($"myorders/{newOrderId}");
+    }
 
-		if (first)
-		{
-			await OrderState.GetStateFromLocalStorage(JSRuntime);
-
-			EditContext = new EditContext(OrderState.Order.DeliveryAddress);
-			EditContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
-
-			StateHasChanged();
-		}
-
-	}
-
-	async Task PlaceOrder()
-	{
-		var newOrderId = await Repository.PlaceOrder(OrderState.Order);
-		OrderState.ResetOrder();
-		NavigationManager.NavigateTo($"myorders/{newOrderId}");
-	}
-
-	async Task RequestNotificationSubscriptionAsync()
-	{
-		var subscription = await JSRuntime.InvokeAsync<NotificationSubscription>("blazorPushNotifications.requestSubscription");
-		if (subscription is not null)
-		{
-			try
-			{
-				await Repository.SubscribeToNotifications(subscription);
-			}
-			catch (AccessTokenNotAvailableException ex)
-			{
-				ex.Redirect();
-			}
-		}
-	}
+    async Task RequestNotificationSubscriptionAsync()
+    {
+        var subscription = await JSRuntime.InvokeAsync<NotificationSubscription>("blazorPushNotifications.requestSubscription");
+        if (subscription is not null)
+        {
+            await Repository.SubscribeToNotifications(subscription);
+        }
+    }
 }

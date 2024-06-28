@@ -17,6 +17,7 @@ builder.Services.AddScoped<HttpClient>(sp =>
 	});
 
 builder.Services.AddScoped<IRepository, HttpRepository>();
+builder.Services.AddScoped<IOrderService, HttpOrderService>();  // added for educational purposes to understand Client-Server communication in Blazor
 builder.Services.AddScoped<OrderState>();
 
 // Add Security
