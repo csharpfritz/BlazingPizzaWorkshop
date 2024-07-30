@@ -1,12 +1,68 @@
-# Курсовая работа, 4-й семестр
+<kbd style="width: 2em; height: 2em;"><a href="#en">ENGLISH</a></kbd> | <kbd><a href="#ru">РУССКИЙ</a></kbd>
 
-Мосполитех, Ангел Максим Витальевич
+<h1 name="en" id="en">Beyond Blazing Pizza eShop: .NET 8, ASP.NET Core Blazor, Redis, Postgres, OAuth2, SMTP mailer (Gmail)</h1>
 
-## «Хочешь похудеть? Подари мне пиццу»
+Based on https://github.com/csharpfritz/BlazingPizzaWorkshop
 
-Проект на .NET 8, ASP.NET core Blazor, Redis, Postgres, Oauth2, SMTP mailer (Gmail)
+Official Microsoft tutorial videos available at: https://www.youtube.com/watch?v=sWTpxFcHbfY&list=PLdo4fOcmZ0oXv32dOd36UydQYLejKR61R&index=78
 
-Основан на  https://github.com/csharpfritz/BlazingPizzaWorkshop
+Added to the original project:
+- Redis, Postgres, OAuth2, SMTP mailer (Gmail), site containerization upon publishing.
+- For self-education purposes, dummy services have been added, which can be further developed or removed along with the corresponding three interfaces and project classes (client-server interaction):
+
+  - `builder.Services.AddScoped<IOrderService, OrderService>();` (program.cs server)
+  - `builder.Services.AddScoped<IOrderService, HttpOrderService>();` (program.cs client)
+
+## Project Structure
+
+- `docker-compose.yml` launches 4 containers: Redis, Redis Commander, Postgres, PgAdmin.
+- Blazor site on .NET 8 (full-stack, focused on the server side with integrated APIs, the client is part of the project). When publishing the site on a hosting using the `dotnet publish` command with the appropriate commands, the project is automatically packaged into a container with all dependencies, containerization settings via .NET SDK are in the file `/BlazingPizza/BlazingPizza.csproj`.
+
+### Additional manual configuration required before launch:
+
+#### Blazor:
+- SMTP provider settings, in this project an app key for Gmail is required;
+- OAuth2 key settings for GitHub;
+
+#### Redis Commander:
+- Add a Redis database as in `docker-compose.yml`, by default Redis Commander won't see it.
+
+#### PgAdmin:
+- Add a Server, then a Postgres database as in `docker-compose.yml`, by default PgAdmin won't see the database.
+
+## Project Launch on Windows
+
+- Install .NET 8 SDK;
+- Install and launch Podman Desktop to run the containers;
+- Run `docker-compose up -d` from the root directory of the project;
+- Run the site from the `BlazingPizza` folder with the `dotnet run` command.
+
+## Passwords
+
+Important! Secrets and passwords should not get into Git!!! Therefore, before using Git, replace all passwords with environment variables or load passwords from files not included in Git. In Visual Studio, right-click on the `BlazingPizza` folder, select `Manage User Secrets`.
+
+## Files where password transmission via environment variables needs to be reconfigured
+
+- SMTP Mail: `/BlazingPizza/appsettings.json`
+- OAuth2 provider settings, GitHub example provided, see its section: `BlazingPizza/Program.cs`
+
+## Free Customized GPT for Consultations
+
+- [ASP.NET Core Blazor](https://chatgpt.com/g/g-CgZBXGHdH-asp-net-blazor "ASP.NET Blazor GPT")
+- [God's C#](https://chatgpt.com/g/g-Ild4ouEke-god-s-c "C# GPT")
+- [God's Docker](https://chatgpt.com/g/g-MS7I12iLc-god-s-docker "Docker GPT")
+- [God's PostgreSQL](https://chatgpt.com/g/g-PfbNDcNso-god-s-postgresql "PostreSQL GPT")
+- [God's JavaScript](https://chatgpt.com/g/g-gJ75YnrSy-god-s-javascript "JavaScript GPT")
+- [God's CSS](https://chatgpt.com/g/g-FlIKrZIMv-god-s-css "CSS GPT")
+- [God's HTML](https://chatgpt.com/g/g-PhvWYdSRA-god-s-html "HTML GPT")
+- [PowerShell Breaker](https://chatgpt.com/g/g-5zIR2fcma-powershell-breaker "PowerShell GPT")
+
+Add stars to the pepositories!!!
+
+<hr>
+<h1 name="ru" id="ru">Нечто большее, чем онлайн-пиццерия: .NET 8, ASP.NET core Blazor, Redis, Postgres, Oauth2, SMTP mailer (Gmail)</h1>
+
+Проект основан на  https://github.com/csharpfritz/BlazingPizzaWorkshop
 
 Официальные обучающие видео от Microsoft доступны:  https://www.youtube.com/watch?v=sWTpxFcHbfY&list=PLdo4fOcmZ0oXv32dOd36UydQYLejKR61R&index=78 
 
