@@ -6,7 +6,7 @@ Based on https://github.com/csharpfritz/BlazingPizzaWorkshop
 
 Official Microsoft tutorial videos available at: https://www.youtube.com/watch?v=sWTpxFcHbfY&list=PLdo4fOcmZ0oXv32dOd36UydQYLejKR61R&index=78
 
-Added to the original project:
+Added on top of the original project:
 - Redis, Postgres, OAuth2, SMTP mailer (Gmail), site containerization upon publishing.
 - For self-education purposes, dummy services have been added, which can be further developed or removed along with the corresponding three interfaces and project classes (client-server interaction):
 
