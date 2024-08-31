@@ -6,7 +6,7 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
-
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @inject SignInManager<PizzaStoreUser> SignInManager
 @inject UserManager<PizzaStoreUser> UserManager
 @inject IUserStore<PizzaStoreUser> UserStore
@@ -28,18 +28,17 @@
     logging in.
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="confirmation" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="email" placeholder="Please enter your email." />
-                <label for="email" class="form-label">Email</label>
-                <ValidationMessage For="() => Input.Email" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </EditForm>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <form method="post" action="/Account/ExternalLogin?ReturnUrl=%2Fmyorders%2F39&amp;Action=LoginCallback">
+			<input type="hidden" name="__RequestVerificationToken" value="@Antiforgery.GetTokens(HttpContext).RequestToken">
+			<input type="hidden" name="_handler" value="confirmation">
+			<div class="form-floating mb-3">
+				<input autocomplete="email" placeholder="Please enter your email." name="Input.Email" class="form-control valid" value="">
+				<label for="email" class="form-label">Email</label>
+			</div>
+			<button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+		</form>
     </div>
 </div>
 
