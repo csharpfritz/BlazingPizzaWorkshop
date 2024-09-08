@@ -13,6 +13,5 @@ Here are the list of modules that accompany this workshop:
 | [Building our first home screen and learning about interactivity](docs/01-HomeScreen.md) |
 | [Our first component and Managing State](docs/02-managing-state.md) |
 | [Validating Data](docs/03-validation.md) |
-| [Authentication](docs/)
 | [Authenticating Users with Blazor](docs/04-authentication.md) |
 | [Sharing Components with other projects](docs/05-components.md) |
