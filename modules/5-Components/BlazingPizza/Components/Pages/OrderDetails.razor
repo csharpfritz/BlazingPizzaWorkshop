@@ -47,7 +47,7 @@
 	[Parameter] public int OrderId { get; set; }
 
 	[CascadingParameter]
-	public HttpContext HttpContext { get; set;} = default!; 
+	public Task<AuthenticationState?> AuthenticationState { get; set; }
 
 	OrderWithStatus? orderWithStatus;
 	bool invalidOrder;
@@ -57,16 +57,25 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		// If we were already polling for a different order, stop doing so
-		pollingCancellationToken?.Cancel();
+		if (AuthenticationState is not null)
+		{
+			var authState = await AuthenticationState;
+			var user = authState?.User;
 
-		orderWithStatus = await Repository.GetOrderWithStatus(OrderId);
+			if (user == null || user?.Identity?.IsAuthenticated == false)
+			{
+				return;
+			}
 
-		// Start a new poll loop
-		pollingTask = PollForUpdates();
+			// If we were already polling for a different order, stop doing so
+			pollingCancellationToken?.Cancel();
 
-		await base.OnParametersSetAsync();
+			var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+			orderWithStatus = await Repository.GetOrderWithStatus(OrderId, userId);
 
+			// Start a new poll loop
+			pollingTask = PollForUpdates();
+		}
 	}
 
 	private async Task PollForUpdates()
