@@ -313,7 +313,37 @@ Do this for all the properties. The behavior is now much better! As well as havi
 
 ![Input components](https://user-images.githubusercontent.com/1874516/77242542-ba30b780-6bbc-11ea-8018-be022d6cac0b.png)
 
-The green/red styling is achieved by applying CSS classes, so you can change the appearance of these effects or remove them entirely if you wish.
+The green/red styling is achieved by applying CSS classes, so you can change the appearance of these effects or remove them entirely if you wish.  You can also change the behavior of the controls and force the CSS class that they render when valid or invalid by adding a call to `SetFieldCssClassProvider` like the following in `OnAfterRender`:
+
+```csharp
+public EditContext EditContext { get; set; } = new EditContext(new Order());
+
+override protected async Task OnAfterRenderAsync(bool first)
+{
+
+    if (first)
+    {
+        EditContext = new EditContext(OrderState.Order.DeliveryAddress);
+        EditContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
+    }
+
+}
+```
+
+You can then add the `BootstrapFieldClassProvider` (or whatever type you'd like to call your CSS class provider) with a definition of the CSS classes to use:
+
+```csharp
+public class BootstrapFieldClassProvider : FieldCssClassProvider
+{
+	public override string GetFieldCssClass(EditContext editContext,
+			in FieldIdentifier fieldIdentifier)
+	{
+		var isValid = editContext.IsValid(fieldIdentifier);
+
+		return isValid ? "is-valid" : "is-invalid";
+	}
+}
+```
 
 `InputText` isn't the only built-in input component, though it is the only one we need in this case. Others include `InputCheckbox`, `InputDate`, `InputSelect`, and more.
 
