@@ -108,7 +108,7 @@ To get the available list of specials we need to reach into our repository and g
 
 ```
 @page "/"
-@inject IRepository PIzzaStore
+@inject IRepository PizzaStore
 ```
 
 The `@inject` directive essentially defines a new property on the component where the first token specifies the property type and the second token specifies the property name. The property is populated for you using dependency injection.
