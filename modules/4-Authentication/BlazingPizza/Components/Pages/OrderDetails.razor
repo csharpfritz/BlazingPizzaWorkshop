@@ -41,8 +41,11 @@
 @code {
 	[Parameter] public int OrderId { get; set; }
 
+	// [CascadingParameter]
+	// public HttpContext HttpContext { get; set;} = default!; 
+
 	[CascadingParameter]
-	public HttpContext HttpContext { get; set;} = default!; 
+	private Task<AuthenticationState>? authenticationState { get; set; }
 
 	OrderWithStatus? orderWithStatus;
 	bool invalidOrder;
@@ -52,14 +55,23 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		// If we were already polling for a different order, stop doing so
-		pollingCancellationToken?.Cancel();
+		if (authenticationState is not null)
+		{
+			var authState = await authenticationState;
+			var user = authState?.User;
 
-		orderWithStatus = await Repository.GetOrderWithStatus(OrderId, HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+			if(user?.Identity?.IsAuthenticated == true)
+			{
+				// If we were already polling for a different order, stop doing so
+				pollingCancellationToken?.Cancel();
 
-		// Start a new poll loop
-		pollingTask = PollForUpdates();
+				var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+				orderWithStatus = await Repository.GetOrderWithStatus(OrderId, userId);
 
+				// Start a new poll loop
+				pollingTask = PollForUpdates();
+			}
+		}
 	}
 
 	private async Task PollForUpdates()
@@ -89,10 +101,8 @@
 				pollingCancellationToken.Cancel();
 				Console.Error.WriteLine(ex);
 				await InvokeAsync(StateHasChanged);
-
 			}
 		}
-
 	}
 
 	void IDisposable.Dispose()

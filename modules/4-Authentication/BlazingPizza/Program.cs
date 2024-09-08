@@ -11,8 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-		.AddInteractiveServerComponents()
-		.AddInteractiveWebAssemblyComponents();
+        .AddInteractiveServerComponents()
+        .AddInteractiveWebAssemblyComponents();
 
 
 // Add Security
@@ -21,16 +21,22 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
+var config = builder.Configuration;
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddMicrosoftAccount(options =>
+{
+    options.ClientId = config["Authentication:MSA:ClientID"];
+    options.ClientSecret = config["Authentication:MSA:Secret"];
+})
+.AddIdentityCookies();
 
 
 builder.Services.AddDbContext<PizzaStoreContext>(options =>
-				options.UseSqlite("Data Source=pizza.db"));
+                options.UseSqlite("Data Source=pizza.db"));
 
 // Add Identity
 builder.Services.AddIdentityCore<PizzaStoreUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -52,24 +58,24 @@ var app = builder.Build();
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 using (var scope = scopeFactory.CreateScope())
 {
-	var db = scope.ServiceProvider.GetRequiredService<PizzaStoreContext>();
-	if (db.Database.EnsureCreated())
-	{
-		SeedData.Initialize(db);
-	}
+    var db = scope.ServiceProvider.GetRequiredService<PizzaStoreContext>();
+    if (db.Database.EnsureCreated())
+    {
+        SeedData.Initialize(db);
+    }
 }
 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseWebAssemblyDebugging();
+    app.UseWebAssemblyDebugging();
 }
 else
 {
-	app.UseExceptionHandler("/Error", createScopeForErrors: true);
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -82,9 +88,9 @@ app.MapPizzaApi();
 app.MapControllers();
 
 app.MapRazorComponents<App>()
-		.AddInteractiveServerRenderMode()
-		.AddInteractiveWebAssemblyRenderMode()
-		.AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
+        .AddInteractiveServerRenderMode()
+        .AddInteractiveWebAssemblyRenderMode()
+        .AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
