@@ -8,7 +8,7 @@
 
 <div class="main">
 
-	<EditForm Model="OrderState.Order.DeliveryAddress" OnValidSubmit="PlaceOrder">
+	<EditForm EditContext="EditContext" OnValidSubmit="PlaceOrder">
 
 		<div class="checkout-cols">
 			<div class="checkout-order-details">
@@ -35,6 +35,19 @@
 </div>
 
 @code {
+
+	public EditContext EditContext { get; set; } = new EditContext(new Order());
+
+	override protected async Task OnAfterRenderAsync(bool first)
+	{
+
+		if (first)
+		{
+			EditContext = new EditContext(OrderState.Order.DeliveryAddress);
+			EditContext.SetFieldCssClassProvider(new BootstrapFieldClassProvider());
+		}
+
+	}
 
 	async Task PlaceOrder()
 	{
