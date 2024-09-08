@@ -7,12 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-		.AddInteractiveWebAssemblyComponents();
+	.AddInterativeServerComponents()
+	.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddDbContext<PizzaStoreContext>(options =>
 				options.UseSqlite("Data Source=pizza.db"));
 
 builder.Services.AddScoped<IRepository, EfRepository>();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -47,8 +50,11 @@ app.UseAntiforgery();
 
 app.MapPizzaApi();
 
+app.MapControllers();
+
 app.MapRazorComponents<App>()
-		.AddInteractiveWebAssemblyRenderMode()
-		.AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
+	.AddInteractiveWebAssemblyRenderMode()
+	.AddInteractiveServerRenderMode()
+	.AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
 
 app.Run();

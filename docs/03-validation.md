@@ -9,6 +9,7 @@ It's time to fix this by adding a "checkout" screen that requires customers to e
 Start by adding a new page component, `BlazingPizza.Client/Components/Pages/Checkout.razor`, with a `@page` directive matching the URL `/checkout`. For the initial markup, let's display the details of the order using your `OrderReview` component:
 
 ```razor
+@page "/checkout"
 @rendermode InteractiveWebAssembly
 @inject OrderState OrderState
 
@@ -170,30 +171,29 @@ Open `Address.cs` from the `BlazingPizza.Shared` project, and put a `[Required]`
 ```csharp
 using System.ComponentModel.DataAnnotations;
 
-namespace BlazingPizza
-{
-    public class Address
-    {
-        public int Id { get; set; }
+namespace BlazingPizza.Shared;
 
-            [Required, MaxLength(100)]
-            public string Name { get; set; } = string.Empty;
-    
-            [Required, MaxLength(100)]
-            public string Line1 { get; set; } = string.Empty;
-    
-            [MaxLength(100)]
-            public string Line2 { get; set; } = string.Empty;
-    
-            [Required, MaxLength(50)]
-            public string City { get; set; } = string.Empty;
-    
-            [Required, MaxLength(20)]
-            public string Region { get; set; } = string.Empty;
-    
-            [Required, MaxLength(20)]
-            public string PostalCode { get; set; } = string.Empty;
-    }
+public class Address
+{
+    public int Id { get; set; }
+
+        [Required, MaxLength(100)]
+        public string Name { get; set; } = string.Empty;
+
+        [Required, MaxLength(100)]
+        public string Line1 { get; set; } = string.Empty;
+
+        [MaxLength(100)]
+        public string Line2 { get; set; } = string.Empty;
+
+        [Required, MaxLength(50)]
+        public string City { get; set; } = string.Empty;
+
+        [Required, MaxLength(20)]
+        public string Region { get; set; } = string.Empty;
+
+        [Required, MaxLength(20)]
+        public string PostalCode { get; set; } = string.Empty;
 }
 ```
 

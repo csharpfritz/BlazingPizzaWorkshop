@@ -269,11 +269,10 @@ Now you can implement the polling. Update your `@code` block as follows:
     bool invalidOrder;
     CancellationTokenSource? pollingCancellationToken;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         // If we were already polling for a different order, stop doing so
         pollingCancellationToken?.Cancel();
-
 
 		orderWithStatus = await Repository.GetOrderWithStatus(OrderId);
 
@@ -484,8 +483,8 @@ To use this, update the `PlaceOrder` code so it calls `NavigationManager.Navigat
 ```csharp
 async Task PlaceOrder()
 {
-    var newOrderId = await PizzaStore.PlaceOrder(OrderState.Order);
-    OrderState.ResetOrder();
+    var newOrderId = await PizzaStore.PlaceOrder(order);
+    order = new Order();
     NavigationManager.NavigateTo($"myorders/{newOrderId}");
 }
 ```
@@ -494,7 +493,7 @@ Now as soon as the server accepts the order, the browser will switch to the "ord
 
 ## Advanced state management
 
-You might have noticed this already, but our application has a bug! Since we're storing the list of pizzas in the current order on the Index component, the user's state can be lost if the user leaves the Index page. To see this in action, add a pizza to the current order (don't place the order yet) - then navigate to the MyOrders page and back to Index. When you get back, you'll notice the order is empty!
+You might have noticed this already, but our application has a bug! Since we're storing the list of pizzas in the current order on the Home component, the user's state can be lost if the user leaves the Home page. To see this in action, add a pizza to the current order (don't place the order yet) - then navigate to the MyOrders page and back to Home. When you get back, you'll notice the order is empty!
 
 ## A solution
 
@@ -531,7 +530,7 @@ await builder.Build().RunAsync();
 
 > Note: the reason why we choose scoped over singleton is for symmetry with a server-side-components application. Singleton usually means *for all users*, where as scoped means *for the current unit-of-work*.
 
-## Updating Index
+## Updating Home Screen
 
 Now that this type is registered in DI, we can `@inject` it into the `Home` page.
 
@@ -544,7 +543,7 @@ Now that this type is registered in DI, we can `@inject` it into the `Home` page
 
 Recall that `@inject` is a convenient shorthand to both retrieve something from DI by type, and define a property of that type.
 
-You can test this now by running the app again. If you try to inject something that isn't found in the DI container, then it will throw an exception and the `HOme` page will fail to come up.
+You can test this now by running the app again. If you try to inject something that isn't found in the DI container, then it will throw an exception and the `Home` page will fail to come up.
 
 Now, let's add properties and methods to this class that will represent and manipulate the state of an `Order` and a `Pizza`.
 
@@ -608,7 +607,7 @@ public void RemoveConfiguredPizza(Pizza pizza)
 
 Remember to remove the corresponding methods from `Home.razor`. You must also remember to remove the `order`, `configuringPizza`, and `showingConfigureDialog` fields entirely from `Home.razor`, since you'll be getting the state data from the injected `OrderState`.
 
-At this point it should be possible to get the `Home` component compiling again by updating references to refer to various bits attached to `OrderState`. For example, the remaining `PlaceOrder` method in `Index.razor` should look like this:
+At this point it should be possible to get the `Home` component compiling again by updating references to refer to various bits attached to `OrderState`. For example, the remaining `PlaceOrder` method in `Home.razor` should look like this:
 
 ```csharp
 async Task PlaceOrder()
@@ -627,7 +626,7 @@ Try this out and verify that everything still works. In particular, verify that 
 
 This is a good opportunity to explore how state changes and rendering work in Blazor, and how `EventCallback` solves some common problems. The details of what is happening become more complicated now that `OrderState` is involved.
 
-`EventCallback` tells Blazor to dispatch the event notification (and rendering) to the component that defined the event handler. If the event handler is not defined by a component (`OrderState`) then it will substitute the component that *hooked up* the event handler (`Index`).
+`EventCallback` tells Blazor to dispatch the event notification (and rendering) to the component that defined the event handler. If the event handler is not defined by a component (`OrderState`) then it will substitute the component that *hooked up* the event handler (`Home`).
 
 
 ## Conclusion
