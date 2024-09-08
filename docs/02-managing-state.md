@@ -269,11 +269,10 @@ Now you can implement the polling. Update your `@code` block as follows:
     bool invalidOrder;
     CancellationTokenSource? pollingCancellationToken;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         // If we were already polling for a different order, stop doing so
         pollingCancellationToken?.Cancel();
-
 
 		orderWithStatus = await Repository.GetOrderWithStatus(OrderId);
 
@@ -544,7 +543,7 @@ Now that this type is registered in DI, we can `@inject` it into the `Home` page
 
 Recall that `@inject` is a convenient shorthand to both retrieve something from DI by type, and define a property of that type.
 
-You can test this now by running the app again. If you try to inject something that isn't found in the DI container, then it will throw an exception and the `HOme` page will fail to come up.
+You can test this now by running the app again. If you try to inject something that isn't found in the DI container, then it will throw an exception and the `Home` page will fail to come up.
 
 Now, let's add properties and methods to this class that will represent and manipulate the state of an `Order` and a `Pizza`.
 
