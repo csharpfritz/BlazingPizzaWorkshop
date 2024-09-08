@@ -457,7 +457,7 @@ The pizza size should now update as you move the slider.
 The user should also be able to select additional toppings on `ConfigurePizzaDialog`. Add a list for storing the available toppings. Initialize the list of available toppings by making an HTTP GET request to the `/toppings` minimal API, defined at `PizzaApiExtensions.cs` in the **BlazingPizza.Server** project.
 
 ```csharp
-@inject HttpClient HttpClient
+@inject IRepository Repository
 
 <div class="dialog-container">
 ...
@@ -471,7 +471,7 @@ The user should also be able to select additional toppings on `ConfigurePizzaDia
 
     protected async override Task OnInitializedAsync()
     {
-        toppings = await HttpClient.GetFromJsonAsync<List<Topping>>("toppings") ?? new();
+        toppings = await Repository.GetToppings();
     }
 }
 ```
@@ -572,7 +572,7 @@ Add `@onclick` event handlers to the `ConfigurePizzaDialog` that trigger the `On
 </div>
 ```
 
-In the `HOme` component add an event handler for the `OnCancel` event that hides the dialog and wires it up to the `ConfigurePizzaDialog`.
+In the `Home` component add an event handler for the `OnCancel` event that hides the dialog and wires it up to the `ConfigurePizzaDialog`.
 
 ```html
 <ConfigurePizzaDialog Pizza="configuringPizza" OnCancel="CancelConfigurePizzaDialog" />
