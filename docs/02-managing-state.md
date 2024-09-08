@@ -484,8 +484,8 @@ To use this, update the `PlaceOrder` code so it calls `NavigationManager.Navigat
 ```csharp
 async Task PlaceOrder()
 {
-    var newOrderId = await PizzaStore.PlaceOrder(OrderState.Order);
-    OrderState.ResetOrder();
+    var newOrderId = await PizzaStore.PlaceOrder(order);
+    order = new Order();
     NavigationManager.NavigateTo($"myorders/{newOrderId}");
 }
 ```
