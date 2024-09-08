@@ -62,9 +62,15 @@ public interface IRepository
 }
 ```
 
-There is an implementation of this repository sitting in the `BlazingPizza` project called `EfRepository` taht will interact with the database and return data appropriately.
+There is an implementation of this repository sitting in the `BlazingPizza` project called `EfRepository` that will interact with the database and return data appropriately.  It has already been registered with the service locator in `Program.cs` for you:
 
-Additionally, there are APIs build using the minimal API pattern and residing in the `BlazingPizza.PizzaApiExtensions.cs` file 
+```csharp
+builder.Services.AddScoped<IRepository, EfRepository>();
+```
+
+Additionally, there are APIs built using the minimal API pattern and residing in the `BlazingPizza.PizzaApiExtensions.cs` file.
+
+See also [Create a minimal web API with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-8.0) for additional details.
 
 ### Running the app for the first time
 
@@ -94,35 +100,30 @@ Add a `@code` block to *Home.razor* with a list field to keep track of the avail
 }
 ```
 
-The code in the `@code` block is added to the generated class for the component. The `PizzaSpecial` type is already defined for you in the **BlazingPizza.Shared** project.
+The code in the `@code` block is added to the generated class for the component at compile-time. The `PizzaSpecial` type is already defined for you in the **BlazingPizza.Shared** project.
 
-To get the available list of specials we need to call an API on the backend. Blazor provides a preconfigured `HttpClient` through dependency injection that is already setup with the correct base address. Use the `@inject` directive to inject an `HttpClient` into the `Index` component.
+To get the available list of specials we need to call an API on the backend. We'll use the repository object already defined and access it with dependency injection. Use the `@inject` directive to inject an `HttpClient` into the `Index` component.
 
 ```
 @page "/"
-@inject HttpClient HttpClient
+@inject IRepository
 ```
 
 The `@inject` directive essentially defines a new property on the component where the first token specifies the property type and the second token specifies the property name. The property is populated for you using dependency injection.
 
-Override the `OnInitializedAsync` method in the `@code` block to retrieve the list of pizza specials. This method is part of the component lifecycle and is called when the component is initialized. Use the `GetFromJsonAsync<T>()` method to handle deserializing the response JSON:
+Override the `OnInitializedAsync` method in the `@code` block to retrieve the list of pizza specials. This method is part of the component lifecycle and is called when the component is initialized. Use the `GetSpecials()` method to acquire the list of pizza specials from the database:
 
 ```csharp
 @code {
     List<PizzaSpecial>? specials;
 
-    protected override async Task OnInitializedAsync()
-    {
-        specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>("specials", BlazingPizza.OrderContext.Default.ListPizzaSpecial);
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		specials = await PizzaStore.GetSpecials();
+	}
+
 }
 ```
-
-The `/specials` API is defined by a minimal API at `PizzaApiExtensions.cs` in the **BlazingPizza.Server** project.
-
-See also [Create a minimal web API with ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-6.0) for additional details.
-
-> Note: `BlazingPizza.OrderContext.Default.ListPizzaSpecial` refers to Json serialization with [source generators](https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-source-generation).
 
 Once the component is initialized it will render its markup. Replace the markup in the `Index` component with the following to list the pizza specials:
 
@@ -155,7 +156,7 @@ Run the app by hitting `Ctrl-F5`. Now you should see a list of the specials that
 
 Next we'll set up the layout for the app. 
 
-Layouts in Blazor are also components. They inherit from `LayoutComponentBase`, which defines a `Body` property that can be used to specify where the body of the layout should be rendered. The layout component for our pizza store app is defined in *Shared/MainLayout.razor*.
+Layouts in Blazor are also components. They inherit from `LayoutComponentBase`, which defines a `Body` property that can be used to specify where the body of the layout should be rendered. The layout component for our pizza store app is defined in *BlazingPizza/Components/Layout/MainLayout.razor*.
 
 ```html
 @inherits LayoutComponentBase
@@ -165,7 +166,7 @@ Layouts in Blazor are also components. They inherit from `LayoutComponentBase`, 
 </div>
 ```
 
-To see how the layout is associated with your pages, look at the `<Router>` component in `App.razor`. Notice that the `DefaultLayout` parameter determines the layout used for any page that doesn't specify its own layout directly.
+To see how the layout is associated with your pages, look at the contents of `Routes.razor`. Notice that the `DefaultLayout` parameter determines the layout used for any page that doesn't specify its own layout directly.
 
 You can also override this `DefaultLayout` on a per-page basis. To do so, you can add a directive such as `@layout SomeOtherLayout` at the top of any `.razor` page component. However, you will not need to do so in this application.
 
@@ -199,4 +200,7 @@ Run the app by hitting `Ctrl-F5`. With our new layout, our pizza store app now l
 ![image](https://user-images.githubusercontent.com/1874516/77239419-aa52ac80-6b97-11ea-84ae-f880db776f5c.png)
 
 
+
+
+---
 Next up - [Customize a pizza](02-customize-a-pizza.md)
