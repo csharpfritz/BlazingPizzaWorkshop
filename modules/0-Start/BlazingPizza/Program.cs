@@ -15,6 +15,8 @@ builder.Services.AddDbContext<PizzaStoreContext>(options =>
 
 builder.Services.AddScoped<IRepository, EfRepository>();
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 // Initialize the database
@@ -47,6 +49,8 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapPizzaApi();
+
+app.MapControllers();
 
 app.MapRazorComponents<App>()
 		.AddInteractiveWebAssemblyRenderMode()
