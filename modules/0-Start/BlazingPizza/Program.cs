@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-		.AddInteractiveWebAssemblyComponents();
+	.AddInteractiveServerComponents()
+	.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddDbContext<PizzaStoreContext>(options =>
 				options.UseSqlite("Data Source=pizza.db"));
@@ -49,6 +50,7 @@ app.MapPizzaApi();
 
 app.MapRazorComponents<App>()
 		.AddInteractiveWebAssemblyRenderMode()
+		.AddInteractiveServerRenderMode()
 		.AddAdditionalAssemblies(typeof(BlazingPizza.Client._Imports).Assembly);
 
 app.Run();
