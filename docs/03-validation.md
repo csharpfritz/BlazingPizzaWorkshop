@@ -9,6 +9,7 @@ It's time to fix this by adding a "checkout" screen that requires customers to e
 Start by adding a new page component, `BlazingPizza.Client/Components/Pages/Checkout.razor`, with a `@page` directive matching the URL `/checkout`. For the initial markup, let's display the details of the order using your `OrderReview` component:
 
 ```razor
+@page "/checkout"
 @rendermode InteractiveWebAssembly
 @inject OrderState OrderState
 
