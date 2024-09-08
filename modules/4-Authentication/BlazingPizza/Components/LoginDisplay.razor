@@ -10,11 +10,11 @@
             <img src="img/user.svg" />
             <div>
                 <a href="Account/Manage" class="username">@context.User.Identity.Name</a>
-								<form action="Account/Logout" method="post">
-									<AntiforgeryToken />
-									<input type="hidden" name="ReturnUrl" value="@currentUrl" />
+				<form action="Account/Logout" method="post">
+					<AntiforgeryToken />
+					<input type="hidden" name="ReturnUrl" value="@currentUrl" />
 	                <button class="btn btn-link sign-out" type="submit">Sign out</button>
-								</form>
+				</form>
             </div>
         </Authorized>
         <NotAuthorized>
@@ -43,5 +43,4 @@
     {
         Navigation.LocationChanged -= OnLocationChanged;
     }
-
 }

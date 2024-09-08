@@ -9,28 +9,22 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Controllers
+builder.Services.AddControllers();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
 		.AddInteractiveServerComponents()
 		.AddInteractiveWebAssemblyComponents();
 
-
 // Add Security
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<IdentityUserAccessor>();
-builder.Services.AddScoped<IdentityRedirectManager>();
-builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
-
-
-builder.Services.AddDbContext<PizzaStoreContext>(options =>
-				options.UseSqlite("Data Source=pizza.db"));
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddIdentityCookies();
 
 // Add Identity
 builder.Services.AddIdentityCore<PizzaStoreUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -38,13 +32,16 @@ builder.Services.AddIdentityCore<PizzaStoreUser>(options => options.SignIn.Requi
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
+builder.Services.AddDbContext<PizzaStoreContext>(options =>
+				options.UseSqlite("Data Source=pizza.db"));
+
 builder.Services.AddSingleton<IEmailSender<PizzaStoreUser>, IdentityNoOpEmailSender>();
 
-
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<IRepository, EfRepository>();
 builder.Services.AddScoped<OrderState>();
-
-builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -58,7 +55,6 @@ using (var scope = scopeFactory.CreateScope())
 		SeedData.Initialize(db);
 	}
 }
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
