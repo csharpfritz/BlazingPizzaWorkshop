@@ -292,9 +292,12 @@ We don't need all of those methods yet, so let's just leave them as is.
 
 2. We need to register this new repository so that our Home component finds it
 
-Let's register the new `HttpRepository` with the servier locator that runs in web assembly by updating the contents of the `BlazingPizza.Client/Program.cs` file to include this registration:
+Let's register the new `HttpRepository` with the server locator that runs in web assembly by updating the contents of the `BlazingPizza.Client/Program.cs` file to include this registration:
 
 ```csharp
+global using BlazingPizza.Shared;
+
+
 builder.Services.AddScoped<HttpClient>(sp => 
 	new HttpClient
 	{
