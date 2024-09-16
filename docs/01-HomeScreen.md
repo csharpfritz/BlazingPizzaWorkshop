@@ -708,6 +708,24 @@ async Task PlaceOrder()
 }
 ```
 
+We are calling method PlaceOrder in HttpRepository.cs which is part of the BlazingPizza.Client project. However, at this point, we will also need to add signature of the PlaceOrder method to the interface IRepository in BlazingPizza.Shared project and all of its implementations. If we don't do that, our solution will fail to build. 
+
+In the IRepository.cs in BlazingPizza.Shared project, add the following line before closing parenthesis of the IRepository interface:
+
+```csharp
+Task PlaceOrder(Order order);
+```
+
+In the EfRepository.cs in BlazingPizza project, add empty implementation of the interface before closing parenthesis of the EfRepository class:
+
+```csharp
+public Task PlaceOrder(Order order)
+{
+    throw new NotImplementedException();
+}
+```
+
+
 You should now be able to add and remove configured pizzas from the order and submit the order.
 
 ![Order list pane](https://user-images.githubusercontent.com/1874516/77239878-b55c0b80-6b9c-11ea-905f-0b2558ede63d.png)
