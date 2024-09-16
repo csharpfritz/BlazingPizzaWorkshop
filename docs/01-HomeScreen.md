@@ -242,7 +242,13 @@ This will direct the server to run this page in server interactive mode.  The se
 
 It makes more sense to deliver the first page as WebAssembly.  In this way, we can pre-render the non-interactive parts and allow the interactive parts of the page to render and run in the browser after the download of WebAssembly components completes.
 
-However, WebAssembly code runs in a separate assembly that's only delivered in the browser.  In our solution, that assembly is the output of the BlazingPizza.Client project.  Let's move the `Home.razor` file into that project by cutting and pasting the file into the root of the BlazingPizza.Client project. We'll need to make two more updates in order to enable our Home page to run as a web assembly file:
+However, WebAssembly code runs in a separate assembly that's only delivered in the browser.  In our solution, that assembly is the output of the BlazingPizza.Client project.  Let's move the `Home.razor` file into that project by cutting and pasting the file into the root of the BlazingPizza.Client project. After the move, we will need to update render mode for this page to enable it to be rendered using web assembly:
+
+```csharp
+@rendermode InteractiveWebAssembly
+```
+
+We'll need to make two more updates in order to enable our Home page to run as a web assembly file:
 
 1. Create a new IRepository for the BlazingPizza.Client project
 
