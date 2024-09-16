@@ -6,7 +6,7 @@ When we think about what this type of application does, it has a very static hom
 
 ## Pizza store starting point
 
-We've set up the initial solution for you for the pizza store app in this repo. Go ahead and clone this repo to your machine. You'll find the [starting point](../modules/00-get-started) in the *save-points* folder along with the end state for each session.
+We've set up the initial solution for you for the pizza store app in this repo. Go ahead and clone this repo to your machine. You'll find the [starting point](../modules/0-Start) in the *save-points* folder along with the end state for each session.
 
 The solution already contains four projects:
 
@@ -292,9 +292,12 @@ We don't need all of those methods yet, so let's just leave them as is.
 
 2. We need to register this new repository so that our Home component finds it
 
-Let's register the new `HttpRepository` with the servier locator that runs in web assembly by updating the contents of the `BlazingPizza.Client/Program.cs` file to include this registration:
+Let's register the new `HttpRepository` with the server locator that runs in web assembly by updating the contents of the `BlazingPizza.Client/Program.cs` file to include this registration:
 
 ```csharp
+global using BlazingPizza.Shared;
+
+
 builder.Services.AddScoped<HttpClient>(sp => 
 	new HttpClient
 	{
