@@ -725,7 +725,6 @@ public Task PlaceOrder(Order order)
 }
 ```
 
-
 You should now be able to add and remove configured pizzas from the order and submit the order.
 
 ![Order list pane](https://user-images.githubusercontent.com/1874516/77239878-b55c0b80-6b9c-11ea-905f-0b2558ede63d.png)
