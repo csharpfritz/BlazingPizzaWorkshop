@@ -487,6 +487,32 @@ async Task PlaceOrder()
 }
 ```
 
+You will need to update method signature of PlaceOrder in IRepository and implementations in HttpRepository, and EfRepository so that it returns newOrderId:
+
+BlazingPizza.Shared/IRepository.cs:
+```csharp
+Task<int> PlaceOrder(Order order);
+```
+
+BlazingPizza.Client/HttpRepository.cs:
+```csharp
+public async Task<int> PlaceOrder(Order order)
+{
+    var response = await _httpClient.PostAsJsonAsync("orders", order);
+    var newOrderId = await response.Content.ReadFromJsonAsync<int>();
+    return newOrderId;
+
+}
+```
+
+BlazingPizza/EfRepository.cs:
+```csharp
+public Task<int> PlaceOrder(Order order)
+{
+    throw new NotImplementedException();
+}
+```
+
 Now as soon as the server accepts the order, the browser will switch to the "order details" display and begin polling for updates.
 
 ## Advanced state management
