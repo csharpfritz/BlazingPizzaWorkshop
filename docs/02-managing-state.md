@@ -30,7 +30,7 @@ This shows it's not strictly necessary to use `<NavLink>`. We'll see the reason 
 
 ## Adding a "My Orders" page
 
-If you click "My Orders", you'll end up on a page that says "Sorry, there's nothing at this address.". Obviously this is because you haven't yet added anything that matches the URL `myorders`. But if you're watching really carefully, you might notice that on this occasion it's not just doing client-side (SPA-style) navigation, but instead is doing a full-page reload.
+If you click "My Orders", you'll end up on a page that says "404: Not Found". Obviously this is because you haven't yet added anything that matches the URL `myorders`. But if you're watching really carefully, you might notice that on this occasion it's not just doing client-side (SPA-style) navigation, but instead is doing a full-page reload.
 
 What's really happening is this:
 
@@ -39,8 +39,6 @@ What's really happening is this:
 3. However, since no match is found, Blazor falls back on full-page load navigation in case the URL is meant to be handled by server-side code.
 4. However, the server doesn't have anything that matches this either, so it falls back on rendering the client-side Blazor application.
 5. This time, Blazor sees that nothing matches on either client *or* server, so it falls back on rendering the `NotFound` block from your `Routes.razor` component.
-
-If you want to, try changing the content in the `NotFound` block in your `Routes.razor` component to see how you can customize this message.
 
 As you can guess, we will make the link actually work by adding a component to match this route. Create a file in the `BlazingPizza/Components/Pages` folder called `MyOrders.razor`, with the following content:
 
