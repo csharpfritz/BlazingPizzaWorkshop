@@ -38,7 +38,17 @@ How do these files make their way to the Blazor app? For a Blazor library projec
 
 The final link is for the page hosting the Blazor client app to include the desired files (in our case `.js` and `.css`). The `BlazingPizza/App.razor` includes these files using relative URIs like `_content/BlazingPizza.ComponentsLibrary/localStorage.js`. This is the general pattern for references files bundled with a Blazor class library - `_content/<library name>/<file path>`.
 
----
+```html
+<body>
+    <Routes />
+    <script src="_framework/blazor.web.js"></script>
+
+    <script src="_content/BlazingPizza.ComponentsLibrary/localStorage.js"></script>
+    <script src="_content/BlazingPizza.ComponentsLibrary/pushNotifications.js"></script>
+    <script src="_content/BlazingPizza.ComponentsLibrary/deliveryMap.js"></script>
+    <script src="_content/BlazingPizza.ComponentsLibrary/leaflet/leaflet.js"></script>
+</body>
+```
 
 If you start typing in `Map`, you'll notice that the editor doesn't offer completion for it. This is because the binding between elements and components are governed by C#'s namespace binding rules. The `Map` component is defined in the `BlazingPizza.ComponentsLibrary.Map` namespace, which we don't have an `@using` for.
 
