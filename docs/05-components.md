@@ -104,7 +104,7 @@ Add an async `RemovePizza` method to the `Home` component that calls the `Confir
 ```csharp
 async Task RemovePizza(Pizza configuredPizza)
 {
-    if (await JS.Confirm($"Remove {configuredPizza.Special?.Name} pizza from the order?"))
+    if (await JSRuntime.Confirm($"Remove {configuredPizza.Special?.Name} pizza from the order?"))
     {
         OrderState.RemoveConfiguredPizza(configuredPizza);
     }
