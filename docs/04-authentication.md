@@ -249,15 +249,15 @@ Next, to make the router respect such attributes, update *Routes.razor* to rende
 @using Microsoft.AspNetCore.Components.Authorization
 <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client.OrderState).Assembly }">
     <Found Context="routeData">
-			<AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-				<NotAuthorized>
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
                 <p>You are not authorized to access this resource.</p>
-            				</NotAuthorized>
-				<Authorizing>
-					<text>Authorizing...  Please wait</text>
-				</Authorizing>
-			</AuthorizeRouteView>
-			<FocusOnNavigate RouteData="routeData" Selector="h1" />
+            </NotAuthorized>
+            <Authorizing>
+                <text>Authorizing...  Please wait</text>
+            </Authorizing>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
 ```
@@ -290,15 +290,15 @@ Then replace the `NotAuthorized` content in *Routes.razor* with the `RedirectToL
 @using Microsoft.AspNetCore.Components.Authorization
 <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client.OrderState).Assembly }">
     <Found Context="routeData">
-			<AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
-				<NotAuthorized>
-					<RedirectToLogin />
-				</NotAuthorized>
-				<Authorizing>
-					<text>Authorizing...  Please wait</text>
-				</Authorizing>
-			</AuthorizeRouteView>
-			<FocusOnNavigate RouteData="routeData" Selector="h1" />
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+            <Authorizing>
+                <text>Authorizing...  Please wait</text>
+            </Authorizing>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
 ```
