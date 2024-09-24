@@ -120,6 +120,9 @@ builder.Services.AddSingleton<IEmailSender<PizzaStoreUser>, IdentityNoOpEmailSen
 var app = builder.Build();
 ```
 
+The files are available in [project checkpoint for Module 4](../modules/4-Authentication) 
+
+
 Because we're using ASP.NET Identity, the server will issue an authentication cookie to the client app.
 
 For ASP.NET Identity, we have all the related components to orchestrate the authentication flow in the *BlazingPizza/Components/Account* folder.
@@ -237,25 +240,25 @@ By default, all pages allow for anonymous access, but we can specify that the us
 @attribute [Authorize]
 ```
 
+This attribute is part of `Microsoft.AspNetCore.Authorization` namespace, so you might be prompted to add the using reference to the file.
+
 Next, to make the router respect such attributes, update *Routes.razor* to render an `AuthorizeRouteView` instead of a `RouteView` when the route is found.
 
 ```razor
-<Router AppAssembly="typeof(Program).Assembly" Context="routeData">
-    <Found>
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+@using BlazingPizza.Components.Account.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client.OrderState).Assembly }">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
             <NotAuthorized>
                 <p>You are not authorized to access this resource.</p>
             </NotAuthorized>
             <Authorizing>
-                <div class="main">Please wait...</div>
+                <text>Authorizing...  Please wait</text>
             </Authorizing>
         </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
-    <NotFound>
-        <LayoutView Layout="typeof(MainLayout)">
-            <div class="main">Sorry, there's nothing at this address.</div>
-        </LayoutView>
-    </NotFound>
 </Router>
 ```
 
@@ -280,25 +283,23 @@ Instead of telling the user they are unauthorized it would be better if we redir
 }
 ```
 
-Then replace the `NotAuthorized` content in *App.razor* with the `RedirectToLogin` component.
+Then replace the `NotAuthorized` content in *Routes.razor* with the `RedirectToLogin` component.
 
 ```razor
-<Router AppAssembly="typeof(Program).Assembly" Context="routeData">
-    <Found>
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+@using BlazingPizza.Components.Account.Shared
+@using Microsoft.AspNetCore.Components.Authorization
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client.OrderState).Assembly }">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
             <NotAuthorized>
                 <RedirectToLogin />
             </NotAuthorized>
             <Authorizing>
-                <div class="main">Please wait...</div>
+                <text>Authorizing...  Please wait</text>
             </Authorizing>
         </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
-    <NotFound>
-        <LayoutView Layout="typeof(MainLayout)">
-            <div class="main">Sorry, there's nothing at this address.</div>
-        </LayoutView>
-    </NotFound>
 </Router>
 ```
 
