@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-	.AddInterativeServerComponents()
+	.AddInteractiveServerComponents()
 	.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddDbContext<PizzaStoreContext>(options =>
