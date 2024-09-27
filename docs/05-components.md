@@ -344,7 +344,7 @@ At this point it should be possible to run the code and see that the new dialog 
 
 Now that we've done a basic templated dialog, we're going to try something more sophisticated. Recall that the `MyOrders.razor` page shows a list of orders, but it also contains three-state logic (loading, empty list, and showing items). If we could extract that logic into a reusable component, would that be useful? Let's give it a try.
 
-Start by creating a new file `TemplatedList.razor` in the `BlazingComponents` project. We want this list to have a few features:
+Start by creating a new file `TemplatedList.razor` in the `BlazingPizza.ComponentsLibrary` project. We want this list to have a few features:
 1. Async-loading of any type of data
 2. Separate rendering logic for three states - loading, empty list, and showing items
 
@@ -522,7 +522,7 @@ First, we need to create a delegate that we can pass to the `TemplatedList` that
         var ordersWithStatus = Enumerable.Empty<OrderWithStatus>();
         try
         {
-            ordersWithStatus = await OrdersClient.GetOrders();
+            ordersWithStatus = await Repository.GetOrdersAsync();
         }
         catch (AccessTokenNotAvailableException ex)
         {
